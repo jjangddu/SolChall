@@ -1,9 +1,67 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from user.models import User
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
+from user.models import User
+from .serializers import UserSerializer
 
 # Create your views here.
+
+
+@api_view(['GET'])
+def getUser(request):
+    queryset = User.objects.all()
+    serializer = UserSerializer(queryset, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def postUser(request):
+    user = UserSerializer(data=request.data)
+    if user.is_valid():
+        user.save()
+        return Response(user.data)
+    return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+def update(request, id):
+    try:
+        user = User.objects.get(id=id)
+    except User.DoesNotExist:
+        return Response({'error':{
+            'code': 404,
+            'message': 'User not found'
+        }}, status=status.HTTP_404_NOT_FOUND)
+
+    # Note: This block should be outside the 'except' block
+    serializer = UserSerializer(user, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#전체 삭제
+@api_view(['DELETE'])
+def delete(request):
+    query = User.objects.all()
+    query.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+#id별 삭제하기
+@api_view(['DELETE'])
+def deleteById(request, id):
+    try:
+        query = User.objects.get(id=id)
+    except User.DoesNotExist:
+        return Response({'error':{
+            'code' : 404,
+            'message' : 'User not found'
+        }}, status = status.HTTP_404_NOT_FOUND)
+    query.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 
 def signup_view(request):
     if request.method == 'GET':
