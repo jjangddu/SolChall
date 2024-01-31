@@ -1,7 +1,11 @@
 from django.urls import path
 from . import views
+from .views import getUser, postUser, update, delete, deleteById
 
 urlpatterns = [
-    path('signup/', views.signup_view, name='signup'),
-    path('signin/', views.signin_view, name='signin'),
+    path('get/', getUser),
+    path('post/', postUser),
+    path('update/<int:id>/', update),
+    path('delete/', delete),
+    path('delete/<int:id>/',deleteById),
 ]

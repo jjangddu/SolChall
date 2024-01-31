@@ -23,5 +23,5 @@ from serverapp import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("hello/", include('serverapp.urls')),
-    path("", include('user.urls')),
+    path("user/", include('user.urls')),
 ]
