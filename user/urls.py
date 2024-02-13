@@ -1,6 +1,10 @@
-from django.urls import path
+from django.urls import include, path
 from . import views
 from .views import getUser, postUser, update, delete, deleteById
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register('User',views.UserViewSet)
 
 urlpatterns = [
     path('get/', getUser),
@@ -8,4 +12,5 @@ urlpatterns = [
     path('update/<int:id>/', update),
     path('delete/', delete),
     path('delete/<int:id>/',deleteById),
+    # path('', include(router.urls)),
 ]
